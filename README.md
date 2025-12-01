@@ -1,3 +1,3 @@
 # NPC1L1 MD Simulations
 
-Molecular Dynamics simulations of NPC1L1.
+Repository containing files and scripts for Molecular Dynamics simulations of the transmembrane protein NPC1L1.

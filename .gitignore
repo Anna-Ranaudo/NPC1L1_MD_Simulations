@@ -1,0 +1,34 @@
+# System files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+.fuse_hidden*
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# MD Simulation Outputs & Heavy Files
+# Trajectories
+*.nc
+*.xtc
+*.trr
+*.mdcrd
+*.crd
+
+# Restarts & Checkpoints
+*.rst
+*.rst7
+*.restrt
+*.ncrst
+*.vel
+*.chk
+
+# Logs and generic output
+*.log
+*.out
+mdinfo
+mdout
