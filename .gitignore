@@ -17,7 +17,6 @@ __pycache__/
 *.xtc
 *.trr
 *.mdcrd
-*.crd
 
 # Restarts & Checkpoints
 *.rst
