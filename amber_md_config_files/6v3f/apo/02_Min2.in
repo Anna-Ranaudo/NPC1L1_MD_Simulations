@@ -1,0 +1,20 @@
+minimize
+ &cntrl
+  imin=1,maxcyc=10000,ncyc=5000,
+! second minimization, longer than the first, this is run on the gpu
+! max num of cycles = 10000, 
+! if ntmin = 1 (default) switch from steepest desc to cg after ncyc
+
+  ntb=1,ntp=0,
+
+  ntf=1,ntc=1,
+
+  ntpr=50,
+! writes every 50 to .out and .mdinfo files
+
+  ntwr=50,
+! writes every 50 to the restrt file
+
+  cut=10.0,
+ /
+

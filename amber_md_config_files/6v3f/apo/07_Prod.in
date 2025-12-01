@@ -1,0 +1,35 @@
+ run 100 ns NPT equilibration, all restraints removed
+ &cntrl
+   imin=0, ntx=5, irest=1, 
+! ntx=5 reads coords and velocities from previous md
+! irest=1 restart the simulation
+!
+   ntc=2, ntf=2, tol=0.0000001,
+! shake as in 03_Heat.in
+!
+   nstlim=50000000, ntt=3, gamma_ln=1.0,
+   temp0=303.0,
+! 50000000 steps. 50000000 * 0.002 = 100000 ps = 100 ns
+! thermostat as in 03_Heat.in, constant temp at 303
+!
+   ntpr=50000, ntwr=50000, ntwx=50000,
+! write output every 50000 steps = 100 ps 
+!
+   dt=0.002, ig=-1,
+! as in 03_Heat.in
+!
+   ntb=2, cut=10.0, ioutfm=1, ntxo=2,
+! constant pressure
+! output type as before
+!
+   ntp=3, csurften=3, gamma_ten=0.0, ninterface=2,
+! as in 05_Back.in
+!
+ /
+ /
+ &ewald
+  skinnb=3.0,
+! Buffer zone for nonbonded neighbor list updates (3.0 Å) 
+!
+ /
+

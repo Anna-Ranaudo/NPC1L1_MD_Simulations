@@ -1,0 +1,24 @@
+minimize
+ &cntrl
+  imin=1,maxcyc=1000,ncyc=500,
+! min with max num of cycles = 1000, 
+! if ntmin = 1 (default) switch from steepest desc to cg after ncyc
+! so it does 500 sd and 500 cg
+
+  ntb=1,ntp=0,
+! Box information will be read if ntb > 0, constant volume periodic boundary conditions
+! ntp 0 no pressure scaling
+
+  ntf=1,ntc=1,
+! no costraints, no shake, all bonds flex
+
+  ntpr=50,
+! writes every 50 to .out and .mdinfo files
+
+  ntwr=50,
+! writes every 50 to the restrt file
+
+  cut=10.0,
+! cutoff for non-bonded interactions, correct for the ff we use (Amber ff19SB)
+ /
+

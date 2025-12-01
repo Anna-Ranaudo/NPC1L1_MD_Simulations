@@ -1,0 +1,46 @@
+ heating to 100K
+ &cntrl
+   imin=0, ntx=1, irest=0, 
+! first md, imin=0=md
+! ntx=1 reads coords but not velocities since it is the first md
+! irest=0 not a restart
+! 
+   ntc=2, ntf=2, tol=0.0000001,
+! ntc=2, use shake (constraint) on all bonds involving H
+! and do not calculate forces for these (ntf=2)
+! tolerance tight
+! 
+   nstlim=2500, ntt=3, gamma_ln=1.0,
+! 2500 steps. time= n steps * dt = 2500 * 0.002 ps = 5 ps
+! ntt = 3: Langevin thermostat for temperature control (good for heating)
+! gamma_ln=1.0: Langevin collision frequency = 1.0 ps⁻¹ (moderate friction)
+! 
+   ntr=1, ig=-1,
+! ntr=1 positional restraints, ig=-1 random initial vel 
+! 
+   ntpr=500, ntwr=500,ntwx=500,
+! ntpr: write info every 500 steps = 1ps
+! ntwr: write restart 
+! ntwx: write coord traj 
+! 
+   dt=0.002,nmropt=1,
+! timestep, 
+! Allows for time-dependent weight changes (&wt sections used). 
+! 
+   ntb=1,ntp=0,cut=10.0,ioutfm=1,ntxo=2,
+! ntb=1: =constant volume (=2: constant pressure)
+! ntp=0 no pressure control
+! cutoff for non-bonded interactions, correct for the ff we use (Amber ff19SB)
+! ioutfm=1: Output coordinates in NetCDF binary format
+! ntxo=2:  format for restart files (NetCDF restart file) 
+!
+   restraint_wt=5.0, restraintmask='!:WAT,Na+,K+,Cl-',
+! force constant for restraint: 5 kcal/mol·Å²
+! Restrains everything except water and ions (WAT, Na⁺, K⁺, Cl⁻) 
+! 
+ /
+ &wt type='TEMP0', istep1=0, istep2=2500,
+                   value1=0.0, value2=100.0 /
+ &wt type='END' /
+! Linearly ramp the target temperature from 0 K to 100 K during steps 0 to 2500
+! 

@@ -1,0 +1,38 @@
+ run 1 ns NPT with restraints on receptor carbon-alpha atoms and ligand
+ &cntrl
+   imin=0, ntx=5, irest=1, 
+! ntx=5 reads coords and velocities from previous md
+! irest=1 restart the simulation
+!
+   ntc=2, ntf=2, tol=0.0000001,
+! shake as in 03_Heat.in
+!
+   nstlim=500000, ntt=3, gamma_ln=1.0,
+   temp0=303.0,
+! 500000 steps. 500000 * 0.002 = 1000 ps
+! thermostat as in 03_Heat.in, constant temp at 303
+!
+   ntpr=50000, ntwr=50000, ntwx=50000,
+! write output every 50000 steps = 100 ps 
+!
+   dt=0.002, ig=-1,
+! as in 03_Heat.in
+!
+   ntr=1, ntb=2, cut=10.0, ioutfm=1, ntxo=2,
+! posres, constant pressure
+! output type as before
+!
+   ntp=3, csurften=3, gamma_ten=0.0, ninterface=2, 
+! as in 05_Back.in
+!
+   restraint_wt=5.0, restraintmask=':1262 | @CA'
+! restraints on molecule num 1262 (ligand) and c alpha
+!
+ /
+ /
+ &ewald
+  skinnb=3.0,
+! Buffer zone for nonbonded neighbor list updates (3.0 Å) 
+!
+ /
+

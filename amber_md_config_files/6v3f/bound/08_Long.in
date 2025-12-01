@@ -1,0 +1,33 @@
+ run 0.4 microsecond NPT production
+ &cntrl
+   imin=0, ntx=5, irest=1 ,
+! ntx=5 reads coords and velocities from previous md
+! irest=1 restart the simulation
+!
+   ntc=2, ntf=2, tol=0.0000001,
+! shake as in 03_Heat.in
+!
+   nstlim=200000000, ntt=3, gamma_ln=2.0,
+   temp0=303.0,
+! 200000000 * 0.002 ps  = 400000 ps  = 400 ns
+! thermostat as in 03_Heat.in, but with
+! gamma_ln: collision frequency γ, in ps−1
+! constant temp at 303
+!
+   ntpr=50000, ntwr=50000, ntwx=50000,
+! write output every 50000 steps = 100 ps 
+!
+   dt=0.002, ig=-1,
+!
+   ntb=2, cut=10.0, ioutfm=1, ntxo=2,
+! constant pressure
+! output type as before
+!
+   ntp=3, csurften=3, gamma_ten=0.0, ninterface=2, barostat=1,
+! as in 05_Back.in
+! barostat=1 is Berendsen (recommended in lipid21 work) 
+!
+ /
+
+! there is no ewald section but it is active by default
+

@@ -1,0 +1,37 @@
+ heating to 303K
+ &cntrl
+   imin=0, ntx=5, irest=1, 
+! ntx=5 reads coords and velocities from previous md
+! irest=1 restart the simulation
+!
+   ntc=2, ntf=2,tol=0.0000001,
+! shake as in 03_Heat.in
+!
+   nstlim=50000, ntt=3, gamma_ln=1.0, 
+! 50000 steps. time=n steps * dt = 50000*0.002 ps= 100 ps
+! thermostat as in 03_Heat.in
+!
+   ntr=1, ig=-1,
+! use positional restraints
+! ig=-1 still random vel? since we are continuing, this should not be needed
+!
+   ntpr=5000, ntwr=5000,ntwx=5000,
+! write output every 10 ps
+!
+   dt=0.002,nmropt=1,
+! as in 03_Heat.in
+!
+   ntb=2,taup=2.0,cut=10.0,ioutfm=1,ntxo=2,
+   ntp=2,
+! ntb=2 and ntp=2: constant pressure, Isotropic pressure scaling 
+! coupling to barostat every taup 2 ps
+!
+   restraint_wt=5.0, restraintmask='!:WAT,Na+,K+,Cl-',
+! restraints as in 03_Heat.in
+!
+ /
+ &wt type='TEMP0', istep1=0, istep2=50000,
+                   value1=100.0, value2=303.0 /
+ &wt type='END' /
+! increases T linearly from 100 to 303 K
+!
