@@ -3,10 +3,10 @@ addPath /home/rame/anaconda3/envs/AmberTools24/lib/python3.12/site-packages/pack
 source leaprc.lipid_ext
 source leaprc.protein.ff19SB
 source leaprc.water.opc
-SYS = loadpdb bilayer_6v3h-x-MD-apo.amber.pdb
+SYS = loadpdb bilayer_6V3H-x-MD-apo.amber.pdb
 setBox SYS vdw
 addionsrand SYS K+ 0
 addionsrand SYS Cl- 0
-savepdb SYS bilayer_6v3h-x-MD-apo.amber_lipid.pdb
-saveAmberParmNetcdf SYS bilayer_6v3h-x-MD-apo.amber_lipid.top bilayer_6v3h-x-MD-apo.amber_lipid.crd
+savepdb SYS bilayer_6V3H-x-MD-apo.amber_lipid.pdb
+saveAmberParmNetcdf SYS bilayer_6V3H-x-MD-apo.amber_lipid.top bilayer_6V3H-x-MD-apo.amber_lipid.crd
 quit
