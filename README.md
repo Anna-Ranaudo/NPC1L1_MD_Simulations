@@ -2,7 +2,7 @@
 
 Repository containing files and scripts for molecular dynamics simulations of the transmembrane protein NPC1L1.
 
-## The repository is structured as follows:                
+### The repository is structured as follows:                
 - `input_structures`:
     - `6v3f`: Contains the input structures for the NPC1L1 open conformation (PDB ID: [6V3F](https://www.rcsb.org/structure/6V3F)).
     - `6v3h`: Contains the input structures for the NPC1L1 closed conformation (PDB ID: [6V3H](https://www.rcsb.org/structure/6V3H)).
@@ -13,12 +13,12 @@ Repository containing files and scripts for molecular dynamics simulations of th
 
 
 
-## To build the membrane and topology files:
+### To build the membrane and topology files:
 - `scripts/set-up-simulations/0-build-membrane-and-top-files.sh`.
 
-## To run the energy minimization + MD simulation:
+### To run the energy minimization + MD simulation:
 - `1-run-energy-min.sh`
 - `2-run-md.sh`
 
-## To run the analysis:
+### To run the analysis:
 - `scripts/analyze-simulations/...`
