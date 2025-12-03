@@ -1,0 +1,7 @@
+parm AMBER_TOPOLOGY
+
+trajin OUTPUT_DIR/concatenated.nc
+strip !(STRIP_MASK) parmout OUTPUT_DIR/stripped.prmtop
+trajout OUTPUT_DIR/stripped.nc
+go
+quit

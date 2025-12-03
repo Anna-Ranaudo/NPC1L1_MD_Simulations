@@ -1,0 +1,7 @@
+parm OUTPUT_DIR/stripped.prmtop
+
+trajin OUTPUT_DIR/stripped.nc
+autoimage
+trajout OUTPUT_DIR/final_pbc.nc
+run
+quit

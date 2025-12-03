@@ -1,0 +1,7 @@
+parm AMBER_TOPOLOGY
+
+TRAJIN_FILES
+
+trajout OUTPUT_DIR/concatenated.nc
+go
+quit
