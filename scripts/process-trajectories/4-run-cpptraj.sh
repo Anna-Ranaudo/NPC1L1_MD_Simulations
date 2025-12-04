@@ -110,15 +110,15 @@ process_template "${SCRIPTS_DIR}/3-treat-pbcs.in" "${OUTPUT_DIR}/3-treat-pbcs.ru
 # ---------------------------------------------------------------------------------------
 
 echo "Running Step 1: Concatenation..."
-cpptraj -i "${OUTPUT_DIR}/1-concatenate.run.in" > "${OUTPUT_DIR}/1-concatenate.log"
+/home/rame/anaconda3/envs/AmberTools24/bin/cpptraj -i "${OUTPUT_DIR}/1-concatenate.run.in" > "${OUTPUT_DIR}/1-concatenate.log"
 if [ $? -ne 0 ]; then echo "Step 1 failed! Check log."; exit 1; fi
 
 echo "Running Step 2: Stripping Water/Membrane..."
-cpptraj -i "${OUTPUT_DIR}/2-stripwater-membrane.run.in" > "${OUTPUT_DIR}/2-stripwater-membrane.log"
+/home/rame/anaconda3/envs/AmberTools24/bin/cpptraj -i "${OUTPUT_DIR}/2-stripwater-membrane.run.in" > "${OUTPUT_DIR}/2-stripwater-membrane.log"
 if [ $? -ne 0 ]; then echo "Step 2 failed! Check log."; exit 1; fi
 
 echo "Running Step 3: Treating PBCs..."
-cpptraj -i "${OUTPUT_DIR}/3-treat-pbcs.run.in" > "${OUTPUT_DIR}/3-treat-pbcs.log"
+/home/rame/anaconda3/envs/AmberTools24/bin/cpptraj -i "${OUTPUT_DIR}/3-treat-pbcs.run.in" > "${OUTPUT_DIR}/3-treat-pbcs.log"
 if [ $? -ne 0 ]; then echo "Step 3 failed! Check log."; exit 1; fi
 
 # ---------------------------------------------------------------------------------------
