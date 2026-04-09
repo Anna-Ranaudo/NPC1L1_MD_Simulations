@@ -14,13 +14,16 @@ import os
 plot_pairs = [
     
     #("open_bound", "open_apo"),
-    #("closed_bound", "closed_apo"),
-    ("open_bound", "closed_bound"),
+    ("closed_bound", "closed_apo"),
+    #("open_bound", "closed_bound"),
     #("open_apo", "closed_apo"),
     
 ]
 
-title = f"Open vs closed conformation, bound"
+
+#title = f"Open conformation, bound vs apo"
+title = f"Closed conformation, bound vs apo"
+#title = f"Open vs closed conformation, bound"
 #title = f"Open vs closed conformation, apo"
 
 
@@ -30,7 +33,7 @@ results_dir = "../final_plots/closed/bound-vs-apo/"
 
 
 ###### to compare open and closed in the same structure: i.e. bound or apo
-results_dir = "../final_plots/comparison_open-vs-closed/"
+#results_dir = "../final_plots/comparison_open-vs-closed/"
 
 
 os.makedirs(results_dir, exist_ok=True)
@@ -51,9 +54,9 @@ systems = {
         "color": "blue",
         "cmap": "Blues",
         # compare open apo vs open bound
-        #"file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg" 
+        "file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg" 
         # compare bound open vs closed
-        "file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3f.xvg"
+        #"file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3f.xvg"
     },
 
     "open_apo": {
@@ -61,9 +64,9 @@ systems = {
         "color": "red",
         "cmap": "Reds",
         # compare open apo vs open bound
-        #"file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg" 
+        "file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg" 
         # compare apo open vs closed
-        "file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3f.xvg"
+        #"file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3f.xvg"
     },
 
     "closed_bound": {
@@ -71,9 +74,9 @@ systems = {
         "color": "green",
         "cmap": "Greens",
         # compare closed apo vs open bound
-        #"file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg" 
+        "file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg" 
         # compare bound open vs closed
-        "file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3h.xvg"
+        #"file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3h.xvg"
     },
 
     "closed_apo": {
@@ -81,9 +84,9 @@ systems = {
         "color": "purple",
         "cmap": "Purples",
         # compare closed apo vs open bound
-        #"file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg" 
+        "file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg" 
         # compare apo open vs closed
-        "file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3h.xvg"
+        #"file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3h.xvg"
     }
 }
 
@@ -148,6 +151,33 @@ for sys1_id, sys2_id in plot_pairs:
     print("  - Calculating KDEs...")
     z1 = calculate_kde(x1, y1, X, Y)
     z2 = calculate_kde(x2, y2, X, Y)
+
+    # Calculate areas covered by the KDE surfaces (threshold >= 5% of maximum)
+    threshold = 0.05
+    dx = (xmax - xmin) / 99  # 100 grid points mean 99 intervals
+    dy = (ymax - ymin) / 99
+    cell_area = dx * dy
+    
+    # Calculate individual areas
+    mask1 = z1 >= threshold
+    mask2 = z2 >= threshold
+    
+    area1 = np.sum(mask1) * cell_area
+    area2 = np.sum(mask2) * cell_area
+    
+    # Calculate intersection area and percentages
+    mask_intersect = mask1 & mask2
+    area_intersect = np.sum(mask_intersect) * cell_area
+    
+    perc_sys1_in_sys2 = (area_intersect / area1) * 100 if area1 > 0 else 0
+    perc_sys2_in_sys1 = (area_intersect / area2) * 100 if area2 > 0 else 0
+    
+    print(f"  - Area {sys1_id}: {area1:.2f} nm²")
+    print(f"  - Area {sys2_id}: {area2:.2f} nm²")
+    print(f"  - Overlap area: {area_intersect:.2f} nm²")
+    print(f"  - {perc_sys1_in_sys2:.1f}% of {sys1_id} overlaps with {sys2_id}")
+    print(f"  - {perc_sys2_in_sys1:.1f}% of {sys2_id} overlaps with {sys1_id}")
+
 
     # --------------------------------------------------
     # Plotting
