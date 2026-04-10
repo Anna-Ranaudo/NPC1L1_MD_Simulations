@@ -23,3 +23,8 @@ Repository containing files and scripts for molecular dynamics simulations of th
 
 ### To run the analysis:
 - `scripts-analysis/...`
+
+### The results are stored in the `final_data` directory.
+### The figures/plots are stored in the `final_plots` directory.
+
+
