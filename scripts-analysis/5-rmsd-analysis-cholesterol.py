@@ -11,18 +11,23 @@ from functools import reduce
 # =============================================================================
 # --- BLOCK 1A: Open bound ---
 system_name = "Open conformation"
-base_dir = "../6v3f"
+traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/"
+results_dir = "../final_data/open/bound/"
+plots_dir = "../final_plots/open/bound/"
+
 
 # --- BLOCK 1C: Closed bound ---
 #system_name = "Closed conformation"
-#base_dir = "../6v3h"
+#traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/"
+#results_dir = "../final_data/closed/bound/"
+#plots_dir = "../final_plots/closed/bound/"
 
 
 # common for both systems:
-data_dir = os.path.join(base_dir, "data/col/")
-results_dir = os.path.join(base_dir, "results/col/confronti-r-1-5/last-aprile25")
 os.makedirs(results_dir, exist_ok=True)
+os.makedirs(plots_dir, exist_ok=True)
 
+data_dir = os.path.join(traj_dir, "data/col/")
 topology = os.path.join(data_dir, "prot-lig.prmtop")
 traj_name = "07-08-prot-lig-pbc.nc"
 replicas = ["run-md1", "run-md2", "run-md3", "run-md4", "run-md5"]
@@ -122,6 +127,6 @@ ax_time.tick_params(axis='x', labelsize=TICK_SIZE)
 
 # save .png
 plt.tight_layout()
-plot_path = os.path.join(results_dir, "rmsd-chol.png")
+plot_path = os.path.join(plots_dir, "rmsd-chol.png")
 plt.savefig(plot_path, dpi=600)
 print(f"Chart saved in: {plot_path}")

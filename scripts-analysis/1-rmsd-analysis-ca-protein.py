@@ -12,38 +12,43 @@ from functools import reduce
 replicas = ["run-md1", "run-md2", "run-md3", "run-md4", "run-md5"]
 
 # --- BLOCK 1A: Open bound ---
-#base_dir = "../6v3f"
+#traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/"
 #system_title = "Open bound"
-#data_dir = os.path.join(base_dir, "data/col/")
-#results_dir = os.path.join(base_dir, "results/col/confronti-r-1-5/last-aprile25")
+#data_dir = os.path.join(traj_dir, "data/col/")
 #topology = "prot-lig.prmtop"
 #traj_name = "07-08-prot-lig-pbc.nc"
+#results_dir = "../final_data/open/bound/"
+#plots_dir = "../final_plots/open/bound/"
 
 # --- BLOCK 1B: Open apo ---
-#base_dir = "../6v3f"
-#system_title = "Open apo"
-#data_dir = os.path.join(base_dir, "data/no-col/")
-#results_dir = os.path.join(base_dir, "results/no-col/confronti-r-1-5/last-aprile25")
-#topology = "prot.prmtop"
-#traj_name = "07-08-prot-pbc.nc"
+traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/"
+system_title = "Open apo"
+data_dir = os.path.join(traj_dir, "data/no-col/")
+topology = "prot.prmtop"
+traj_name = "07-08-prot-pbc.nc"
+results_dir = "../final_data/open/apo/"
+plots_dir = "../final_plots/open/apo/"
 
 # --- BLOCK 1C: Closed bound ---
-base_dir = "../6v3h"
-system_title = "Closed bound"
-data_dir = os.path.join(base_dir, "data/col/")
-results_dir = os.path.join(base_dir, "results/col/confronti-r-1-5/last-aprile25")
-topology = "prot-lig.prmtop"
-traj_name = "07-08-prot-lig-pbc.nc"
+#traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/"
+#system_title = "Closed bound"
+#data_dir = os.path.join(traj_dir, "data/col/")
+#topology = "prot-lig.prmtop"
+#traj_name = "07-08-prot-lig-pbc.nc"
+#results_dir = "../final_data/closed/bound/"
+#plots_dir = "../final_plots/closed/bound/"
 
 # --- BLOCK 1D: Closed apo ---
-#base_dir = "../6v3h"
+#traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/"
 #system_title = "Closed apo"
-#data_dir = os.path.join(base_dir, "data/no-col/")
-#results_dir = os.path.join(base_dir, "results/no-col/confronti-r-1-5/last-aprile25")
+#data_dir = os.path.join(traj_dir, "data/no-col/")
 #topology = "prot.prmtop"
 #traj_name = "07-08-prot-pbc.nc"
+#results_dir = "../final_data/closed/apo/"
+#plots_dir = "../final_plots/closed/apo/"
 
 os.makedirs(results_dir, exist_ok=True)
+os.makedirs(plots_dir, exist_ok=True)
 # ------------------------------------------
 
 
@@ -97,7 +102,7 @@ rmsd_cols = [f'RMSD_md{i} (Å)' for i in range(1, len(replicas) + 1)]
 merged_df[rmsd_cols] = merged_df[rmsd_cols].round(2)
 
 # save .csv
-csv_path = os.path.join(results_dir, "1rmsd-ca-protein.csv")
+csv_path = os.path.join(results_dir, "rmsd-ca-protein.csv")
 merged_df.to_csv(csv_path, sep="\t", index=False)
 print(f"Data saved in: {csv_path}")
 
@@ -142,6 +147,6 @@ ax_time.tick_params(axis='x', labelsize=TICK_SIZE)
 
 # save .png
 plt.tight_layout()
-plot_path = os.path.join(results_dir, "1rmsd-ca-protein.png")
+plot_path = os.path.join(plots_dir, "rmsd-ca-protein.png")
 plt.savefig(plot_path, dpi=600)
 print(f"Chart saved in: {plot_path}")
