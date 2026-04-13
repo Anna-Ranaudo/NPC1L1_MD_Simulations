@@ -14,40 +14,45 @@ from functools import reduce
 replicas = ["run-md1", "run-md2", "run-md3", "run-md4", "run-md5"]
 
 # --- BLOCK 1A: Open bound ---
-#system_id = "open_bound"
-#system_title = "Open bound"
-#topology = "../6v3f/data/col/prot-lig.prmtop"
-#traj_base = "../6v3f/data/col/"
-#traj_name = "07-08-prot-lig-pbc.nc"
-#results_dir = "../6v3f/results/col/confronti-r-1-5/last-aprile25"
+system_id = "open_bound"
+system_title = "Open bound"
+traj_base = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/data/col/"
+topology = "prot-lig.prmtop"
+traj_name = "07-08-prot-lig-pbc.nc"
+results_dir = "../final_data/open/bound/"
+plots_dir = "../final_plots/open/bound/"
 
 # --- BLOCK 1B: Open apo ---
 # system_id = "open_apo"
 # system_title = "Open apo"
-# topology = "../6v3f/data/no-col/prot.prmtop"
-# traj_base = "../6v3f/data/no-col/"
+# traj_base = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/data/no-col/"
+# topology = "prot.prmtop"
 # traj_name = "07-08-prot-pbc.nc"
-# results_dir = "../6v3f/results/no-col/confronti-r-1-5/last-aprile25"
+# results_dir = "../final_data/open/apo/"
+# plots_dir = "../final_plots/open/apo/"
 
 # --- BLOCK 1C: Closed bound ---
-system_id = "closed_bound"
-system_title = "Closed bound"
-topology = "../6v3h/data/col/prot-lig.prmtop"
-traj_base = "../6v3h/data/col/"
-traj_name = "07-08-prot-lig-pbc.nc"
-results_dir = "../6v3h/results/col/confronti-r-1-5/last-aprile25"
+#system_id = "closed_bound"
+#system_title = "Closed bound"
+#traj_base = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/data/col/"
+#topology = "prot-lig.prmtop"
+#traj_name = "07-08-prot-lig-pbc.nc"
+#results_dir = "../final_data/closed/bound/"
+#plots_dir = "../final_plots/closed/bound/"
 
 # --- BLOCK 1D: Closed apo ---
 # system_id = "closed_apo"
 # system_title = "Closed apo"
-# topology = "../6v3h/data/no-col/prot.prmtop"
-# traj_base = "../6v3h/data/no-col/"
+# traj_base = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/data/no-col/"
+# topology = "prot.prmtop"
 # traj_name = "07-08-prot-pbc.nc"
-# results_dir = "../6v3h/results/no-col/confronti-r-1-5/last-aprile25"
+# results_dir = "../final_data/closed/apo/"
+# plots_dir = "../final_plots/closed/apo/"
 
 
-# Ensure results directory exists
+# Ensure directories exist
 os.makedirs(results_dir, exist_ok=True)
+os.makedirs(plots_dir, exist_ok=True)
 # -----------------------------------------------------------------------------
 
 
@@ -64,7 +69,8 @@ for i, rep in enumerate(replicas, start=1):
     print(f"Analysing {system_title} - Replica {i}: {rep}...")
     
     traj_path = os.path.join(traj_base, rep, traj_name)
-    u = mda.Universe(topology, traj_path)
+    top_path = os.path.join(traj_base, topology)
+    u = mda.Universe(top_path, traj_path)
     
     # 1. Calculate average structure
     print(f"  - Calculating average structure...")
@@ -152,6 +158,6 @@ plt.tight_layout()
 
 # Save the plot
 plot_filename = f"rmsf-ca-single-replica-{system_id}.png"
-plot_path = os.path.join(results_dir, plot_filename)
+plot_path = os.path.join(plots_dir, plot_filename)
 plt.savefig(plot_path, dpi=600, transparent=False, facecolor='white')
 print(f"Chart saved in: {plot_path}")

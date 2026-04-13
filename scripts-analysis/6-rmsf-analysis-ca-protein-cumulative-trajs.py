@@ -11,41 +11,47 @@ from functools import reduce
 # =============================================================================
 # 1. DEFINE THE 4 SYSTEMS
 # =============================================================================
-results_dir = "../compare-6v3f-6v3h/last-aprile25/"
+results_dir = "../final_data/comparison_four_systems/"
+plots_dir = "../final_plots/comparison_four_systems/"
 os.makedirs(results_dir, exist_ok=True)
+os.makedirs(plots_dir, exist_ok=True)
+
 replicas = ["run-md1", "run-md2", "run-md3", "run-md4", "run-md5"]
+
+# Base path for all trajectories
+base_path = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/"
 
 systems = [
     {
         "id": "open_bound",
         "label": "Open bound",
         "color": "blue",
-        "topology": "../6v3f/data/col/prot-lig.prmtop",
-        "traj_base": "../6v3f/data/col/",
+        "traj_base": os.path.join(base_path, "6v3f/data/col/"),
+        "topology": "prot-lig.prmtop",
         "traj_name": "07-08-prot-lig-pbc.nc"
     },
     {
         "id": "open_apo",
         "label": "Open apo",
         "color": "red",
-        "topology": "../6v3f/data/no-col/prot.prmtop",
-        "traj_base": "../6v3f/data/no-col/",
+        "traj_base": os.path.join(base_path, "6v3f/data/no-col/"),
+        "topology": "prot.prmtop",
         "traj_name": "07-08-prot-pbc.nc"
     },
     {
         "id": "closed_bound",
         "label": "Closed bound",
         "color": "green",
-        "topology": "../6v3h/data/col/prot-lig.prmtop",  
-        "traj_base": "../6v3h/data/col/",
+        "traj_base": os.path.join(base_path, "6v3h/data/col/"),
+        "topology": "prot-lig.prmtop",
         "traj_name": "07-08-prot-lig-pbc.nc"
     },
     {
         "id": "closed_apo",
         "label": "Closed apo",
         "color": "purple",
-        "topology": "../6v3h/data/no-col/prot.prmtop", 
-        "traj_base": "../6v3h/data/no-col/",
+        "traj_base": os.path.join(base_path, "6v3h/data/no-col/"),
+        "topology": "prot.prmtop",
         "traj_name": "07-08-prot-pbc.nc"
     }
 ]
@@ -67,7 +73,8 @@ for sys in systems:
     traj_paths = [os.path.join(sys["traj_base"], rep, sys["traj_name"]) for rep in replicas]
     
     # 2. load all the repliclas in a MDAnalysis universe
-    u = mda.Universe(sys["topology"], *traj_paths)
+    top_path = os.path.join(sys["traj_base"], sys["topology"])
+    u = mda.Universe(top_path, *traj_paths)
     
     # 3. calculate average structure + fitting
     print(f"  - calculating average structure...")
@@ -145,6 +152,6 @@ ax.axvspan(882, 1105, color='#f3d3f0', alpha=0.7, zorder=0, label='_nolegend_') 
 plt.tight_layout()
 
 # save the png
-plot_path = os.path.join(results_dir, "rmsf-ca-protein-ave-5rep-all-systems.png")
+plot_path = os.path.join(plots_dir, "rmsf-ca-protein-ave-5rep-all-systems.png")
 plt.savefig(plot_path, dpi=600, transparent=True)
 print(f"chart saved in: {plot_path}")

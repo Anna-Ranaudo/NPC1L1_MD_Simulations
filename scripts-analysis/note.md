@@ -1,3 +1,0 @@
-man mano che  gli script sono okish li metto qui...
-poi da mettere in scripts/analyze-trajectories/
-
