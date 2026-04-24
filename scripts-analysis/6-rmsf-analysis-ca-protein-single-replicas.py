@@ -60,7 +60,7 @@ os.makedirs(plots_dir, exist_ok=True)
 # 2. RMSF CALCULATION (LOOP OVER REPLICAS)
 # =============================================================================
 # define residues for fitting and residues for rmsf calculation
-fit_sel = 'name CA and (resnum 612:774 or resnum 1092:1242)'
+fit_sel = 'name CA and (resnum 612:782 or resnum 1092:1242)'
 rmsf_sel = 'resnum 1:1261 and name CA'
 
 dataframes = []

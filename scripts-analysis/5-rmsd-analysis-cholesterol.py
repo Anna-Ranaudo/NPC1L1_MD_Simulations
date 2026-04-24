@@ -37,7 +37,7 @@ replicas = ["run-md1", "run-md2", "run-md3", "run-md4", "run-md5"]
 # 2. RMSD CALCULATION
 # =============================================================================
 # define residues for fitting and residues for rmsf calculation
-fit_sel = 'name CA and (resnum 612:774 or resnum 1092:1242)'
+fit_sel = 'name CA and (resnum 612:782 or resnum 1092:1242)'
 rmsd_sel = 'resnum 1262 and not type h*'
 
 dataframes = []
