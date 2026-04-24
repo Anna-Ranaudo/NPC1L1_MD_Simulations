@@ -67,13 +67,26 @@ rmsf_sel = 'resnum 1:1261 and name CA'
 dataframes = []
 
 for sys in systems:
-    print(f"analysing system: {sys['label']}...")
+    print(f"Analyzing system: {sys['label']}...")
     
-    # 1. generate the 5 replicas paths for the current system
-    traj_paths = [os.path.join(sys["traj_base"], rep, sys["traj_name"]) for rep in replicas]
+    # 1. generate the 5 replicas paths for the current system and check existence
+    potential_traj_paths = [os.path.join(sys["traj_base"], rep, sys["traj_name"]) for rep in replicas]
+    traj_paths = [p for p in potential_traj_paths if os.path.exists(p)]
     
-    # 2. load all the repliclas in a MDAnalysis universe
     top_path = os.path.join(sys["traj_base"], sys["topology"])
+    
+    if not os.path.exists(top_path):
+        print(f"  [ERROR] Topology not found: {top_path}. Skipping system.")
+        continue
+        
+    if not traj_paths:
+        print(f"  [WARNING] No replicas found for {sys['label']}. Skipping.")
+        continue
+        
+    if len(traj_paths) < len(replicas):
+        print(f"  [INFO] Found {len(traj_paths)}/{len(replicas)} replicas.")
+
+    # 2. load the available replicas in a MDAnalysis universe
     u = mda.Universe(top_path, *traj_paths)
     
     # 3. calculate average structure + fitting
@@ -85,7 +98,7 @@ for sys in systems:
     align.AlignTraj(u, ref, select=fit_sel, in_memory=True).run(step=100)
     
     # 4. Calculate RMSF
-    print(f"  - Calculatig RMSF...")
+    print(f"  - Calculating RMSF...")
     c_alphas = u.select_atoms(rmsf_sel)
     R = rms.RMSF(c_alphas).run(step=100)
     

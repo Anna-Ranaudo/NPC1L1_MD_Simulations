@@ -7,146 +7,168 @@ import os
 from functools import reduce
 
 # =============================================================================
-# 1. DEFINE THE 4 SYSTEMS (uncomment the block you want to analyze)
+# 1. DEFINE THE 4 SYSTEMS
 # =============================================================================
 replicas = ["run-md1", "run-md2", "run-md3", "run-md4", "run-md5"]
 
-# --- BLOCK 1A: Open bound ---
-#traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/"
-#system_title = "Open bound"
-#data_dir = os.path.join(traj_dir, "data/col/")
-#topology = "prot-lig.prmtop"
-#traj_name = "07-08-prot-lig-pbc.nc"
-#results_dir = "../final_data/open/bound/"
-#plots_dir = "../final_plots/open/bound/"
+systems = [
+    {
+        "traj_dir": "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/",
+        "system_title": "Open bound",
+        "data_dir_suffix": "data/col/",
+        "topology": "prot-lig.prmtop",
+        "traj_name": "07-08-prot-lig-pbc.nc",
+        "results_dir": "../final_data/open/bound/",
+        "plots_dir": "../final_plots/open/bound/",
+    },
+    {
+        "traj_dir": "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/",
+        "system_title": "Open apo",
+        "data_dir_suffix": "data/no-col/",
+        "topology": "prot.prmtop",
+        "traj_name": "07-08-prot-pbc.nc",
+        "results_dir": "../final_data/open/apo/",
+        "plots_dir": "../final_plots/open/apo/",
+    },
+    {
+        "traj_dir": "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/",
+        "system_title": "Closed bound",
+        "data_dir_suffix": "data/col/",
+        "topology": "prot-lig.prmtop",
+        "traj_name": "07-08-prot-lig-pbc.nc",
+        "results_dir": "../final_data/closed/bound/",
+        "plots_dir": "../final_plots/closed/bound/",
+    },
+    {
+        "traj_dir": "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/",
+        "system_title": "Closed apo",
+        "data_dir_suffix": "data/no-col/",
+        "topology": "prot.prmtop",
+        "traj_name": "07-08-prot-pbc.nc",
+        "results_dir": "../final_data/closed/apo/",
+        "plots_dir": "../final_plots/closed/apo/",
+    },
+]
 
-# --- BLOCK 1B: Open apo ---
-traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3f/"
-system_title = "Open apo"
-data_dir = os.path.join(traj_dir, "data/no-col/")
-topology = "prot.prmtop"
-traj_name = "07-08-prot-pbc.nc"
-results_dir = "../final_data/open/apo/"
-plots_dir = "../final_plots/open/apo/"
-
-# --- BLOCK 1C: Closed bound ---
-#traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/"
-#system_title = "Closed bound"
-#data_dir = os.path.join(traj_dir, "data/col/")
-#topology = "prot-lig.prmtop"
-#traj_name = "07-08-prot-lig-pbc.nc"
-#results_dir = "../final_data/closed/bound/"
-#plots_dir = "../final_plots/closed/bound/"
-
-# --- BLOCK 1D: Closed apo ---
-#traj_dir = "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/"
-#system_title = "Closed apo"
-#data_dir = os.path.join(traj_dir, "data/no-col/")
-#topology = "prot.prmtop"
-#traj_name = "07-08-prot-pbc.nc"
-#results_dir = "../final_data/closed/apo/"
-#plots_dir = "../final_plots/closed/apo/"
-
-os.makedirs(results_dir, exist_ok=True)
-os.makedirs(plots_dir, exist_ok=True)
-# ------------------------------------------
-
-
-# =============================================================================
-# 2. RMSD CALCULATION
-# =============================================================================
 # define residues for fitting and residues for rmsf calculation
 fit_sel = 'name CA and (resnum 612:782 or resnum 1092:1242)'
 rmsd_sel = 'resnum 1:1261 and name CA'
 
-dataframes = []
+for system in systems:
+    traj_dir = system["traj_dir"]
+    system_title = system["system_title"]
+    data_dir = os.path.join(traj_dir, system["data_dir_suffix"])
+    topology = system["topology"]
+    traj_name = system["traj_name"]
+    results_dir = system["results_dir"]
+    plots_dir = system["plots_dir"]
 
-for i, rep in enumerate(replicas, start=1):
-    print(f"Analysing replica {i}: {rep}...")
-    top_path = os.path.join(data_dir, topology)
-    traj_path = os.path.join(data_dir, rep, traj_name)
-    u = mda.Universe(top_path, traj_path)
-
-    # align
-    align.AlignTraj(u, u, select=fit_sel, ref_frame=0, in_memory=True).run()
+    print(f"\n>>> Analyzing System: {system_title} <<<")
     
-    # calculate RMSD
-    R = rms.RMSD(u, u, select=rmsd_sel, ref_frame=0, superposition=False)
-    R.run()
+    os.makedirs(results_dir, exist_ok=True)
+    os.makedirs(plots_dir, exist_ok=True)
 
-    # create dataframe
-    col_name = f'RMSD_md{i} (Å)'
-    df = pd.DataFrame(R.results.rmsd, columns=['Frame', 'Time (ps)', col_name])
-    
-    if i > 1:
-        df = df.drop(columns=['Time (ps)'])
+    # =============================================================================
+    # 2. RMSD CALCULATION
+    # =============================================================================
+    dataframes = []
+
+    for i, rep in enumerate(replicas, start=1):
+        print(f"  Analysing replica {i}: {rep}...")
+        top_path = os.path.join(data_dir, topology)
+        traj_path = os.path.join(data_dir, rep, traj_name)
         
-    dataframes.append(df)
+        if not os.path.exists(top_path) or not os.path.exists(traj_path):
+            print(f"  [WARNING] Path not found, skipping: {traj_path}")
+            continue
+            
+        u = mda.Universe(top_path, traj_path)
 
-# =============================================================================
-# 3. MERGE DATAFRAMES
-# =============================================================================
-# Merge all dataframes on column 'Frame'
-merged_df = reduce(lambda left, right: pd.merge(left, right, on='Frame'), dataframes)
-merged_df = merged_df.drop(columns=['Frame'])
+        # align
+        align.AlignTraj(u, u, select=fit_sel, ref_frame=0, in_memory=True).run()
+        
+        # calculate RMSD
+        R = rms.RMSD(u, u, select=rmsd_sel, ref_frame=0, superposition=False)
+        R.run()
 
-# # 1st column: Time, in ns
-cols = merged_df.columns.tolist()
-cols.insert(0, cols.pop(cols.index("Time (ps)")))
-merged_df = merged_df[cols]
-merged_df['Time (ps)'] = merged_df['Time (ps)'] / 1000
-merged_df = merged_df.rename(columns={"Time (ps)": "Time (ns)"})
+        # create dataframe
+        col_name = f'RMSD_md{i} (Å)'
+        df = pd.DataFrame(R.results.rmsd, columns=['Frame', 'Time (ps)', col_name])
+        
+        if len(dataframes) > 0:
+            df = df.drop(columns=['Time (ps)'])
+            
+        dataframes.append(df)
 
-# round RMSD
-rmsd_cols = [f'RMSD_md{i} (Å)' for i in range(1, len(replicas) + 1)]
-merged_df[rmsd_cols] = merged_df[rmsd_cols].round(2)
+    if not dataframes:
+        print(f"  [ERROR] No data found for system {system_title}. Skipping...")
+        continue
 
-# save .csv
-csv_path = os.path.join(results_dir, "rmsd-ca-protein.csv")
-merged_df.to_csv(csv_path, sep="\t", index=False)
-print(f"Data saved in: {csv_path}")
+    # =============================================================================
+    # 3. MERGE DATAFRAMES
+    # =============================================================================
+    # Merge all dataframes on column 'Frame'
+    merged_df = reduce(lambda left, right: pd.merge(left, right, on='Frame'), dataframes)
+    merged_df = merged_df.drop(columns=['Frame'])
 
-# =============================================================================
-# 4. PLOTTING
-# =============================================================================
-LABEL_SIZE = 14
-TITLE_SIZE = 16
-LEGEND_SIZE = 12
-TICK_SIZE = 12
+    # # 1st column: Time, in ns
+    cols = merged_df.columns.tolist()
+    cols.insert(0, cols.pop(cols.index("Time (ps)")))
+    merged_df = merged_df[cols]
+    merged_df['Time (ps)'] = merged_df['Time (ps)'] / 1000
+    merged_df = merged_df.rename(columns={"Time (ps)": "Time (ns)"})
 
-fig, (ax_kde, ax_time) = plt.subplots(
-    1, 2, figsize=(12, 5), sharey=True, gridspec_kw={'width_ratios': [1, 3]}
-)
+    # round RMSD
+    rmsd_cols = [c for c in merged_df.columns if c.startswith('RMSD_')]
+    merged_df[rmsd_cols] = merged_df[rmsd_cols].round(2)
 
-colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
-labels = [f'md{i}' for i in range(1, len(replicas) + 1)]
+    # save .csv
+    csv_path = os.path.join(results_dir, "rmsd-ca-protein.csv")
+    merged_df.to_csv(csv_path, sep="\t", index=False)
+    print(f"  Data saved in: {csv_path}")
 
-# left: KDE plot
-for i, col in enumerate(rmsd_cols):
-    sns.kdeplot(data=merged_df, y=col, ax=ax_kde, fill=True, alpha=0.5, color=colors[i], label=labels[i])
+    # =============================================================================
+    # 4. PLOTTING
+    # =============================================================================
+    LABEL_SIZE = 14
+    TITLE_SIZE = 16
+    LEGEND_SIZE = 12
+    TICK_SIZE = 12
 
-ax_kde.invert_xaxis()
-ax_kde.set_xlabel('')
-ax_kde.set_xticks([])
-ax_kde.set_ylabel('RMSD (Å)', fontsize=LABEL_SIZE)
-ax_kde.legend(loc='upper left', fontsize=LEGEND_SIZE)
+    fig, (ax_kde, ax_time) = plt.subplots(
+        1, 2, figsize=(12, 5), sharey=True, gridspec_kw={'width_ratios': [1, 3]}
+    )
 
-# right: RMSD vs time
-for i, col in enumerate(rmsd_cols):
-    ax_time.plot(merged_df['Time (ns)'], merged_df[col], label=labels[i], color=colors[i])
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
+    labels = [c.split(' ')[0].replace('RMSD_', '') for c in rmsd_cols]
 
-ax_time.set_xlabel('Time (ns)', fontsize=LABEL_SIZE)
-ax_time.set_title(f'Cα RMSD - {system_title}', fontsize=TITLE_SIZE)
-ax_time.set_ylabel('')
+    # left: KDE plot
+    for i, col in enumerate(rmsd_cols):
+        sns.kdeplot(data=merged_df, y=col, ax=ax_kde, fill=True, alpha=0.5, color=colors[i], label=labels[i])
 
-# axes limits and ticks size
-y_max = 8.0 #common for all systems
-ax_kde.set_ylim(0, y_max)
-ax_kde.tick_params(axis='y', labelsize=TICK_SIZE)
-ax_time.tick_params(axis='x', labelsize=TICK_SIZE)
+    ax_kde.invert_xaxis()
+    ax_kde.set_xlabel('')
+    ax_kde.set_xticks([])
+    ax_kde.set_ylabel('RMSD (Å)', fontsize=LABEL_SIZE)
+    ax_kde.legend(loc='upper left', fontsize=LEGEND_SIZE)
 
-# save .png
-plt.tight_layout()
-plot_path = os.path.join(plots_dir, "rmsd-ca-protein.png")
-plt.savefig(plot_path, dpi=600)
-print(f"Chart saved in: {plot_path}")
+    # right: RMSD vs time
+    for i, col in enumerate(rmsd_cols):
+        ax_time.plot(merged_df['Time (ns)'], merged_df[col], label=labels[i], color=colors[i])
+
+    ax_time.set_xlabel('Time (ns)', fontsize=LABEL_SIZE)
+    ax_time.set_title(f'Cα RMSD - {system_title}', fontsize=TITLE_SIZE)
+    ax_time.set_ylabel('')
+
+    # axes limits and ticks size
+    y_max = 8.0 #common for all systems
+    ax_kde.set_ylim(0, y_max)
+    ax_kde.tick_params(axis='y', labelsize=TICK_SIZE)
+    ax_time.tick_params(axis='x', labelsize=TICK_SIZE)
+
+    # save .png
+    plt.tight_layout()
+    plot_path = os.path.join(plots_dir, "rmsd-ca-protein.png")
+    plt.savefig(plot_path, dpi=600)
+    plt.close(fig) # Close plot to free memory
+    print(f"  Chart saved in: {plot_path}")
