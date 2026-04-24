@@ -9,88 +9,43 @@ import os
 # =============================================================================
 # 1. CONFIGURATION
 # =============================================================================
-# Define which pairs you want to plot together
-# Each tuple contains the IDs of the two systems to compare
-plot_pairs = [
-    
-    #("open_bound", "open_apo"),
-    ("closed_bound", "closed_apo"),
-    #("open_bound", "closed_bound"),
-    #("open_apo", "closed_apo"),
-    
-]
-
-
-#title = f"Open conformation, bound vs apo"
-title = f"Closed conformation, bound vs apo"
-#title = f"Open vs closed conformation, bound"
-#title = f"Open vs closed conformation, apo"
-
-
-###### to compare bound and apo in the same structure: i.e. open or closed
-#results_dir = "../final_plots/open/bound-vs-apo/"
-results_dir = "../final_plots/closed/bound-vs-apo/"
-
-
-###### to compare open and closed in the same structure: i.e. bound or apo
-#results_dir = "../final_plots/comparison_open-vs-closed/"
-
-
-os.makedirs(results_dir, exist_ok=True)
-
-# Define the 4 systems with their respective data files and colors
-# !!!   here we have 2D projections of the trajectories onto the common PC1-PC2 subspaces [
-# obtained from the PCA performed on the concatenated trajectories for the following pairs of systems
-# open apo + open bound
-# closed apo + closed bound
-# open bound + closed bound 
-# open apo + closed apo
-
-
-systems = {
-
-    "open_bound": {
-        "label": "Open bound",
-        "color": "blue",
-        "cmap": "Blues",
-        # compare open apo vs open bound
-        "file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg" 
-        # compare bound open vs closed
-        #"file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3f.xvg"
-    },
-
-    "open_apo": {
-        "label": "Open apo",
-        "color": "red",
-        "cmap": "Reds",
-        # compare open apo vs open bound
-        "file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg" 
-        # compare apo open vs closed
-        #"file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3f.xvg"
-    },
-
-    "closed_bound": {
-        "label": "Closed bound",
-        "color": "green",
-        "cmap": "Greens",
-        # compare closed apo vs open bound
-        "file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg" 
-        # compare bound open vs closed
-        #"file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3h.xvg"
-    },
-
-    "closed_apo": {
-        "label": "Closed apo",
-        "color": "purple",
-        "cmap": "Purples",
-        # compare closed apo vs open bound
-        "file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg" 
-        # compare apo open vs closed
-        #"file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3h.xvg"
-    }
+system_metadata = {
+    "open_bound": {"label": "Open bound", "color": "blue", "cmap": "Blues"},
+    "open_apo": {"label": "Open apo", "color": "red", "cmap": "Reds"},
+    "closed_bound": {"label": "Closed bound", "color": "green", "cmap": "Greens"},
+    "closed_apo": {"label": "Closed apo", "color": "purple", "cmap": "Purples"},
 }
 
-
+tasks = [
+    {
+        "title": "Open conformation, bound vs apo",
+        "results_dir": "../final_plots/open/bound-vs-apo/",
+        "sys1": {**system_metadata["open_bound"], "file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg"},
+        "sys2": {**system_metadata["open_apo"], "file": "../final_data/open/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg"},
+        "id1": "open_bound", "id2": "open_apo"
+    },
+    {
+        "title": "Closed conformation, bound vs apo",
+        "results_dir": "../final_plots/closed/bound-vs-apo/",
+        "sys1": {**system_metadata["closed_bound"], "file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-col-5t.xvg"},
+        "sys2": {**system_metadata["closed_apo"], "file": "../final_data/closed/bound-vs-apo/pca-2d-proj/plot-no-col-5t.xvg"},
+        "id1": "closed_bound", "id2": "closed_apo"
+    },
+    {
+        "title": "Open vs closed conformation, bound",
+        "results_dir": "../final_plots/comparison_open-vs-closed/",
+        "sys1": {**system_metadata["open_bound"], "file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3f.xvg"},
+        "sys2": {**system_metadata["closed_bound"], "file": "../final_data/comparison_open-vs-closed/bound/pca-2d-proj/plot-col-6v3h.xvg"},
+        "id1": "open_bound", "id2": "closed_bound"
+    },
+    {
+        "title": "Open vs closed conformation, apo",
+        "results_dir": "../final_plots/comparison_open-vs-closed/",
+        "sys1": {**system_metadata["open_apo"], "file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3f.xvg"},
+        "sys2": {**system_metadata["closed_apo"], "file": "../final_data/comparison_open-vs-closed/apo/pca-2d-proj/plot-no-col-6v3h.xvg"},
+        "id1": "open_apo", "id2": "closed_apo"
+    },
+]
 
 # =============================================================================
 # 2. HELPER FUNCTIONS
@@ -103,11 +58,11 @@ def read_data(file_path):
             lines = f.readlines()[17:][::5]
             for line in lines:
                 v = line.split()
-                x.append(float(v[0]))
-                y.append(float(v[1]))
+                if len(v) >= 2:
+                    x.append(float(v[0]))
+                    y.append(float(v[1]))
         return np.array(x), np.array(y)
     except FileNotFoundError:
-        print(f"Warning: File not found: {file_path}")
         return np.array([]), np.array([])
 
 def calculate_kde(x, y, xx, yy):
@@ -125,19 +80,26 @@ def calculate_kde(x, y, xx, yy):
 # 3. PLOTTING LOOP
 # =============================================================================
 
-for sys1_id, sys2_id in plot_pairs:
-    print(f"\nPlotting {sys1_id} vs {sys2_id}...")
-    
-    sys1 = systems[sys1_id]
-    sys2 = systems[sys2_id]
+for task in tasks:
+    title = task["title"]
+    results_dir = task["results_dir"]
+    sys1 = task["sys1"]
+    sys2 = task["sys2"]
+    sys1_id = task["id1"]
+    sys2_id = task["id2"]
+
+    print(f"\n>>> Processing Comparison: {title} <<<")
     
     # Load data
     x1, y1 = read_data(sys1["file"])
     x2, y2 = read_data(sys2["file"])
     
     if len(x1) == 0 or len(x2) == 0:
-        print(f"Skipping plot {sys1_id}_vs_{sys2_id} due to missing data.")
+        print(f"  [WARNING] Skipping comparison {sys1_id}_vs_{sys2_id} due to missing data.")
+        print(f"    Missing: {sys1['file'] if len(x1)==0 else ''} {sys2['file'] if len(x2)==0 else ''}")
         continue
+
+    os.makedirs(results_dir, exist_ok=True)
 
     # Create common grid based on both datasets
     xmin = min(x1.min(), x2.min())
@@ -172,11 +134,8 @@ for sys1_id, sys2_id in plot_pairs:
     perc_sys1_in_sys2 = (area_intersect / area1) * 100 if area1 > 0 else 0
     perc_sys2_in_sys1 = (area_intersect / area2) * 100 if area2 > 0 else 0
     
-    print(f"  - Area {sys1_id}: {area1:.2f} nm²")
-    print(f"  - Area {sys2_id}: {area2:.2f} nm²")
-    print(f"  - Overlap area: {area_intersect:.2f} nm²")
-    print(f"  - {perc_sys1_in_sys2:.1f}% of {sys1_id} overlaps with {sys2_id}")
-    print(f"  - {perc_sys2_in_sys1:.1f}% of {sys2_id} overlaps with {sys1_id}")
+    print(f"  - Overlap: {perc_sys1_in_sys2:.1f}% of {sys1_id} overlaps with {sys2_id}")
+    print(f"  - Overlap: {perc_sys2_in_sys1:.1f}% of {sys2_id} overlaps with {sys1_id}")
 
 
     # --------------------------------------------------
@@ -205,16 +164,11 @@ for sys1_id, sys2_id in plot_pairs:
     plt.axvline(0, color='black', linewidth=0.6)
     plt.grid(True, linestyle='--', alpha=0.4, zorder=0)
     
-    #plt.xlim(-32, 36)
-    #plt.ylim(-25, 25)
-
     # Labels and title
     plt.xlabel("trajectory projection on PC1 (nm)", fontsize=LABEL_SIZE)
     plt.ylabel("trajectory projection on PC2 (nm)", fontsize=LABEL_SIZE)
     plt.xticks(fontsize=TICK_SIZE)
     plt.yticks(fontsize=TICK_SIZE)
-    
-    #title = f"{sys1['label'].split(' ')[0]} conformation, {sys1['label'].split(' ')[1].strip()} vs {sys2['label'].split(' ')[1].strip()}"
     plt.title(title, fontsize=TITLE_SIZE)
 
     # Legend
@@ -231,4 +185,7 @@ for sys1_id, sys2_id in plot_pairs:
     out_path = os.path.join(results_dir, out_filename)
     plt.savefig(out_path, dpi=600, bbox_inches='tight')
     plt.close() # Close the figure to free memory
-    print(f"Chart saved in: {out_path}")
+    print(f"  Chart saved in: {out_path}")
+
+print("\nAll comparison tasks completed successfully!")
+
