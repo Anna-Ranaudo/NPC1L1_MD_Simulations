@@ -44,7 +44,7 @@ systems = [
     {
         "system_id": "closed_apo",
         "system_title": "Closed apo",
-        "traj_base": "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3H_500ns_sept25/6v3h/data/no-col/",
+        "traj_base": "/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25/6v3h/data/no-col/",
         "topology": "prot.prmtop",
         "traj_name": "07-08-prot-pbc.nc",
         "results_dir": "../final_data/closed/apo/",
