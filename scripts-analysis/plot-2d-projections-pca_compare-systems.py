@@ -126,6 +126,9 @@ for task in tasks:
     
     area1 = np.sum(mask1) * cell_area
     area2 = np.sum(mask2) * cell_area
+
+    print(f"area of {sys1_id} : {area1:.2f}")
+    print(f"area of {sys2_id} : {area2:.2f}")
     
     # Calculate intersection area and percentages
     mask_intersect = mask1 & mask2
