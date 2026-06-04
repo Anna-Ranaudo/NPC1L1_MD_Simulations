@@ -1,0 +1,1 @@
+rsync -PraHv  --inplace   aranaudo@login.leonardo.cineca.it:/leonardo_work/mBI25_AmbCo/annaranaudo/29apr_standard_loop_salt_ok/run-md/*.nc   /dir/destin

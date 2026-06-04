@@ -1,0 +1,7 @@
+parm ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/processing/stripped.prmtop
+
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/processing/stripped.nc
+autoimage
+trajout ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/processing/final_pbc.nc
+run
+quit

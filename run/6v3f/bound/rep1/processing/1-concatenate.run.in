@@ -1,0 +1,13 @@
+parm ../NPC1L1_MD_Simulations/input_structures/6v3f/bound/bilayer_6V3F-x-MD.amber_lipid.top
+
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/07_Prod.nc
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/07_Prod_cont1.nc
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/07_Prod_cont2.nc
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/08_Long.nc
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/08_Long_cont1.nc
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/08_Long_cont2.nc
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/08_Long_cont3.nc
+
+trajout ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/processing/concatenated.nc
+go
+quit

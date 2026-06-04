@@ -1,0 +1,7 @@
+parm ../NPC1L1_MD_Simulations/input_structures/6v3f/bound/bilayer_6V3F-x-MD.amber_lipid.top
+
+trajin ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/processing/concatenated.nc
+strip !(:1-1262) parmout ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/processing/stripped.prmtop
+trajout ../NPC1L1_MD_Simulations/run/6v3f/bound/rep1/processing/stripped.nc
+go
+quit
