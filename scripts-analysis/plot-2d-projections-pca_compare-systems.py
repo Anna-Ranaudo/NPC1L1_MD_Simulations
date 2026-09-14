@@ -144,10 +144,10 @@ for task in tasks:
     # --------------------------------------------------
     # Plotting
     # --------------------------------------------------
-    LABEL_SIZE = 14
-    TITLE_SIZE = 16
-    LEGEND_SIZE = 12
-    TICK_SIZE = 12
+    LABEL_SIZE = 16
+    TITLE_SIZE = 18
+    LEGEND_SIZE = 14
+    TICK_SIZE = 14
     
     plt.figure(figsize=(8, 6))
 
