@@ -1,26 +1,100 @@
 #!/bin/bash
-# 1. convert nc to xtc with MDAnalysis
+# PCA with GROMACS on NPC1L1 MD trajectories.
+# Prerequisites: .nc → .xtc conversion done; concatenated trajectory already built with gmx trjcat.
+# To concatenate: gmx trjcat -f run-md1/<traj>.xtc run-md2/<traj>.xtc ... -o <Nt><traj>.xtc
 
-# 2. if need, concatenate the trajectory files
-# gmx trjcat -f ... # list the xtc files of the single replica
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+BASE_DIR="/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25"
+REPLICAS=("run-md1" "run-md2" "run-md3" "run-md4" "run-md5")
+N_REP=${#REPLICAS[@]}
 
-# 3. run PCA performing a fitting on the transmembrane region
-echo 1 0 | gmx covar -f ../5t07-08-prot-lig-pbc.xtc -s ../../run-md1/f0-07-08-prot-lig-pbc.gro -n index.ndx
-# (in the above command, 1 is the index of the transmembrane region, 0 is the index of the whole protein)
+FIT_GROUP=1    # transmembrane region (group 1 in index.ndx)
+ANAL_GROUP=0   # whole protein      (group 0 in index.ndx)
 
-# 3.1 project the individual trajectories on the cumulative PC1-PC2 space
-echo 1 0 | gmx anaeig -f ../../run-md1/07-08-prot-lig-pbc.xtc -s ../../run-md1/pca-gromacs-07-08/average.pdb -v eigenvec.trr -eig eigenval.xvg -first 1 -last 2 -2d plot12-md1.xvg -n index.ndx
-echo 1 0 | gmx anaeig -f ../../run-md2/07-08-prot-lig-pbc.xtc -s ../../run-md2/pca-gromacs-07-08/average.pdb -v eigenvec.trr -eig eigenval.xvg -first 1 -last 2 -2d plot12-md2.xvg -n index.ndx
-echo 1 0 | gmx anaeig -f ../../run-md3/07-08-prot-lig-pbc.xtc -s ../../run-md3/pca-gromacs-07-08/average.pdb -v eigenvec.trr -eig eigenval.xvg -first 1 -last 2 -2d plot12-md3.xvg -n index.ndx
-echo 1 0 | gmx anaeig -f ../../run-md4/07-08-prot-lig-pbc.xtc -s ../../run-md4/pca-gromacs-07-08/average.pdb -v eigenvec.trr -eig eigenval.xvg -first 1 -last 2 -2d plot12-md4.xvg -n index.ndx
-echo 1 0 | gmx anaeig -f ../../run-md5/07-08-prot-lig-pbc.xtc -s ../../run-md5/pca-gromacs-07-08/average.pdb -v eigenvec.trr -eig eigenval.xvg -first 1 -last 2 -2d plot12-md5.xvg -n index.ndx
+# Each entry: "system_id|pdb_code|condition|traj_name_no_ext"
+# traj_name_no_ext: filename without .xtc (same for nc and xtc versions)
+SYSTEMS=(
+    "open_bound|6v3f|col|07-08-prot-lig-pbc"
+    "open_apo|6v3f|no-col|07-08-prot-pbc"
+    "closed_bound|6v3h|col|07-08-prot-lig-pbc"
+    "closed_apo|6v3h|no-col|07-08-prot-pbc"
+)
 
-# 3.2 calculate the RMSF of the first two eigenvectors
-echo 0 | gmx anaeig -f ../5t07-08-prot-lig-pbc.xtc -s ../../run-md1/f0-07-08-prot-lig-pbc.gro -first 1 -last 1 -rmsf eigrmsf-5t-6v3f-col-pc1.xvg -n index.ndx
-echo 0 | gmx anaeig -f ../5t07-08-prot-lig-pbc.xtc -s ../../run-md1/f0-07-08-prot-lig-pbc.gro -first 2 -last 2 -rmsf eigrmsf-5t-6v3f-col-pc2.xvg -n index.ndx
+# =============================================================================
+# MAIN LOOP OVER SYSTEMS
+# =============================================================================
+for SYSTEM in "${SYSTEMS[@]}"; do
+    IFS='|' read -r SYS_ID PDB COND TRAJ_NAME <<< "$SYSTEM"
 
-# 3.3 calculation on the average structure of the two extreme projections along the trajectory
-# and interpolation of 100 frames in between them
-# as explained in https://manual.gromacs.org/2024.2/onlinehelp/gmx-anaeig.html
-echo 1 0 |  gmx anaeig -f ../5t07-08-prot-lig-pbc.xtc -s ../../run-md1/f0-07-08-prot-lig-pbc.gro -first 1 -last 1 -extr 5t-col-extr-eigenvect1.pdb -nframes 100 -n index.ndx
-echo 1 0 |  gmx anaeig -f ../5t07-08-prot-lig-pbc.xtc -s ../../run-md1/f0-07-08-prot-lig-pbc.gro -first 2 -last 2 -extr 5t-col-extr-eigenvect2.pdb -nframes 100 -n index.ndx
+    DATA_DIR="${BASE_DIR}/${PDB}/data/${COND}"
+    CAT_TRAJ="${DATA_DIR}/${N_REP}t${TRAJ_NAME}.xtc"   # e.g. 5t07-08-prot-lig-pbc.xtc
+    REF_GRO="${DATA_DIR}/${REPLICAS[0]}/f0-${TRAJ_NAME}.gro"  # first frame of replica 1
+    NDX="${DATA_DIR}/index.ndx"
+    PCA_DIR="${DATA_DIR}/pca-gromacs"
+
+    echo ""
+    echo "============================================================"
+    echo "  PCA – system: ${SYS_ID}"
+    echo "============================================================"
+
+    mkdir -p "${PCA_DIR}"
+    # gmx covar/anaeig write output files (eigenvec.trr, average.pdb, …) to the cwd
+    cd "${PCA_DIR}" || { echo "ERROR: cannot enter ${PCA_DIR}"; continue; }
+
+    # -------------------------------------------------------------------------
+    # STEP 1 – covar: compute cumulative PCA (fit on TM region, analyse whole protein)
+    # -------------------------------------------------------------------------
+    echo "${FIT_GROUP} ${ANAL_GROUP}" | gmx covar \
+        -f "${CAT_TRAJ}" \
+        -s "${REF_GRO}" \
+        -n "${NDX}"
+    # Outputs written here: eigenvec.trr  eigenval.xvg  average.pdb  covar.log  covar.xvg
+
+    # -------------------------------------------------------------------------
+    # STEP 2 – anaeig: project each replica onto the cumulative PC1-PC2 space
+    # All replicas use the SAME cumulative average.pdb so projections are comparable.
+    # -------------------------------------------------------------------------
+    for i in "${!REPLICAS[@]}"; do
+        REP="${REPLICAS[$i]}"
+        REP_NUM=$((i + 1))
+        echo "${FIT_GROUP} ${ANAL_GROUP}" | gmx anaeig \
+            -f "${DATA_DIR}/${REP}/${TRAJ_NAME}.xtc" \
+            -s average.pdb \
+            -v eigenvec.trr \
+            -eig eigenval.xvg \
+            -first 1 -last 2 \
+            -2d "plot12-md${REP_NUM}.xvg" \
+            -n "${NDX}"
+    done
+
+    # -------------------------------------------------------------------------
+    # STEP 3 – anaeig: RMSF along PC1 and PC2 (which residues drive each PC)
+    # -------------------------------------------------------------------------
+    for PC in 1 2; do
+        echo "${ANAL_GROUP}" | gmx anaeig \
+            -f "${CAT_TRAJ}" \
+            -s "${REF_GRO}" \
+            -v eigenvec.trr \
+            -first ${PC} -last ${PC} \
+            -rmsf "eigrmsf-${SYS_ID}-pc${PC}.xvg" \
+            -n "${NDX}"
+    done
+
+    # -------------------------------------------------------------------------
+    # STEP 4 – anaeig: extreme structures along PC1 and PC2 (100 interpolated frames)
+    # see  https://manual.gromacs.org/2024.2/onlinehelp/gmx-anaeig.html
+    # -------------------------------------------------------------------------
+    for PC in 1 2; do
+        echo "${FIT_GROUP} ${ANAL_GROUP}" | gmx anaeig \
+            -f "${CAT_TRAJ}" \
+            -s "${REF_GRO}" \
+            -v eigenvec.trr \
+            -first ${PC} -last ${PC} \
+            -extr "${SYS_ID}-extr-pc${PC}.pdb" \
+            -nframes 100 \
+            -n "${NDX}"
+    done
+
+done
