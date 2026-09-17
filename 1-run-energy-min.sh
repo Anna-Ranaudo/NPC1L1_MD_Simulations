@@ -21,8 +21,8 @@ module load  amber/22--openmpi--4.1.4--gcc--11.3.0-tk-cuda-11.8
 export OMP_NUM_THREADS=8
 
 # define topology, starting coordinates, path to the md config files and working directory
-export prmtop="./input_structures/6v3f/bound/bilayer_6v3f-x-MD.amber_lipid.top"
-export coord="./input_structures/6v3f/bound/bilayer_6v3f-x-MD.amber_lipid.crd"
+export prmtop="./input_structures/6v3f/bound/bilayer_6V3F-x-MD.amber_lipid.top"
+export coord="./input_structures/6v3f/bound/bilayer_6V3F-x-MD.amber_lipid.crd"
 export md_config_files="./amber_md_config_files/6v3f/bound/"
 export working_dir="./run/6v3f/bound/"
 mkdir -p $working_dir/

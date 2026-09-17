@@ -17,7 +17,7 @@ STRIP_MASK=":1-1262"    # Mask for the protein/ligand to keep (strips everything
 
 # Base paths
 BASE_DIR="../NPC1L1_MD_Simulations"
-SCRIPTS_DIR="${BASE_DIR}/scripts/process-trajectories"
+SCRIPTS_DIR="${BASE_DIR}/scripts-md/process-trajectories"
 
 # Input/Output paths
 TOPOLOGY_FILE="${BASE_DIR}/input_structures/${SYSTEM}/${STATE}/bilayer_${SYSTEM_UPPER}-x-MD.amber_lipid.top"

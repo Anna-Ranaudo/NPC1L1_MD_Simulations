@@ -1,6 +1,8 @@
 # ===============================
 # LIST PDB
 # ===============================
+
+# those are example files...
 set pdb_list {
     input_structures/6v3h/bound/6v3h-bound-input-no-sol.pdb
     input_structures/6v3f/bound/6v3f-bound-input-no-sol.pdb
