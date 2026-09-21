@@ -73,12 +73,13 @@ for SYSTEM in "${SYSTEMS[@]}"; do
     # STEP 3 – anaeig: RMSF along PC1 and PC2 (which residues drive each PC)
     # -------------------------------------------------------------------------
     for PC in 1 2; do
+        # filename pattern read by plot-rmsf-on-PCs.py, e.g. eigrmsf-5t-6v3f-col-pc1.xvg
         echo "${ANAL_GROUP}" | gmx anaeig \
             -f "${CAT_TRAJ}" \
             -s "${REF_GRO}" \
             -v eigenvec.trr \
             -first ${PC} -last ${PC} \
-            -rmsf "eigrmsf-${SYS_ID}-pc${PC}.xvg" \
+            -rmsf "eigrmsf-${N_REP}t-${PDB}-${COND}-pc${PC}.xvg" \
             -n "${NDX}"
     done
 
@@ -87,12 +88,13 @@ for SYSTEM in "${SYSTEMS[@]}"; do
     # see  https://manual.gromacs.org/2024.2/onlinehelp/gmx-anaeig.html
     # -------------------------------------------------------------------------
     for PC in 1 2; do
+        # filename pattern read by vmd-scripts/load-pca.tcl, e.g. 5t-col-extr-eigenvect1.pdb
         echo "${FIT_GROUP} ${ANAL_GROUP}" | gmx anaeig \
             -f "${CAT_TRAJ}" \
             -s "${REF_GRO}" \
             -v eigenvec.trr \
             -first ${PC} -last ${PC} \
-            -extr "${SYS_ID}-extr-pc${PC}.pdb" \
+            -extr "${N_REP}t-${COND}-extr-eigenvect${PC}.pdb" \
             -nframes 100 \
             -n "${NDX}"
     done
