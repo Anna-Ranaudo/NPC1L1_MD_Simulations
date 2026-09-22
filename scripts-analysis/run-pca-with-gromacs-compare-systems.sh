@@ -100,7 +100,6 @@ for PDB in 6v3f 6v3h; do
                 "${CONF_DIR}/col/${PER_SYS_DIR}/${TMFIT_DIR}/average.pdb"
 
     # fit reference of each projection: the system's top-level per-system average,
-    # i.e. not the TM-fit one used in PART 2 — kept as it was originally run
     for COND in col no-col; do
         SYS_DIR="${CONF_DIR}/${COND}/${PER_SYS_DIR}"
         project "${SYS_DIR}/${N_REP}t$(traj_base "${COND}").xtc" \

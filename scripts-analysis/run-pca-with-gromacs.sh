@@ -97,7 +97,6 @@ for SYSTEM in "${SYSTEMS[@]}"; do
     # see  https://manual.gromacs.org/2024.2/onlinehelp/gmx-anaeig.html
     # -------------------------------------------------------------------------
     for PC in 1 2; do
-        # filename pattern read by vmd-scripts/load-pca.tcl, e.g. 5t-col-extr-eigenvect1.pdb
         echo "${FIT_GROUP} ${ANAL_GROUP}" | gmx anaeig \
             -f "${CAT_TRAJ}" \
             -s "${REF_GRO}" \
