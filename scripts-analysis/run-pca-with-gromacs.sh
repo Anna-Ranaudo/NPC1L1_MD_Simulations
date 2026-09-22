@@ -2,16 +2,24 @@
 # PCA with GROMACS on NPC1L1 MD trajectories.
 # Prerequisites: .nc → .xtc conversion done; concatenated trajectory already built with gmx trjcat.
 # To concatenate: gmx trjcat -f run-md1/<traj>.xtc run-md2/<traj>.xtc ... -o <Nt><traj>.xtc
+#
+# Trajectories are read from BASE_DIR, everything is written to final_data/<state>/<binding>/pca/
+# in the repository. Note that eigenvec.trr and covar.log land there too but are excluded by
+# .gitignore (*.trr, *.log), so they stay as local files and are not versioned.
 
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
 BASE_DIR="/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPLICAS=("run-md1" "run-md2" "run-md3" "run-md4" "run-md5")
 N_REP=${#REPLICAS[@]}
 
 FIT_GROUP=1    # transmembrane region (group 1 in index.ndx)
 ANAL_GROUP=0   # whole protein      (group 0 in index.ndx)
+
+PER_SYS_DIR="all-pca-gromacs-07-08"       # holds the concatenated trajectory of the system
+TMFIT_DIR="pca-fit-transmemb-calc-all"    # holds index.ndx of the transmembrane-fit analysis
 
 # Each entry: "system_id|pdb_code|condition|traj_name_no_ext"
 # traj_name_no_ext: filename without .xtc (same for nc and xtc versions)
@@ -29,10 +37,11 @@ for SYSTEM in "${SYSTEMS[@]}"; do
     IFS='|' read -r SYS_ID PDB COND TRAJ_NAME <<< "$SYSTEM"
 
     DATA_DIR="${BASE_DIR}/${PDB}/data/${COND}"
-    CAT_TRAJ="${DATA_DIR}/${N_REP}t${TRAJ_NAME}.xtc"   # e.g. 5t07-08-prot-lig-pbc.xtc
+    PER_SYS="${DATA_DIR}/${PER_SYS_DIR}"
+    CAT_TRAJ="${PER_SYS}/${N_REP}t${TRAJ_NAME}.xtc"   # e.g. 5t07-08-prot-lig-pbc.xtc
     REF_GRO="${DATA_DIR}/${REPLICAS[0]}/f0-${TRAJ_NAME}.gro"  # first frame of replica 1
-    NDX="${DATA_DIR}/index.ndx"
-    PCA_DIR="${DATA_DIR}/pca-gromacs"
+    NDX="${PER_SYS}/${TMFIT_DIR}/index.ndx"
+    PCA_DIR="${REPO_DIR}/final_data/${SYS_ID%_*}/${SYS_ID#*_}/pca"
 
     echo ""
     echo "============================================================"

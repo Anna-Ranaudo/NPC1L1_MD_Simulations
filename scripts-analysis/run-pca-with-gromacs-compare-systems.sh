@@ -7,14 +7,18 @@
 #   - per-system PCA already run: its average.pdb files are used as fit references here
 #   - joint trajectories already built with gmx trjcat (2 x 5 replicas), e.g.
 #     gmx trjcat -f <sysA>/run-md1/<traj>.xtc ... <sysB>/run-md5/<traj>.xtc -o 10t-<name>.xtc
-#   - index.ndx present in each working directory
+#   - index.ndx present in the joint directory of each pair, on BASE_DIR
 #
-# Re-running overwrites the PCA outputs already in those directories (GROMACS keeps #backup# copies).
+# Trajectories, fit references and index files are read from BASE_DIR; everything is written
+# to final_data/ in the repository, next to the projections it produces. Note that eigenvec.trr
+# and covar.log land there too but are excluded by .gitignore (*.trr, *.log), so they stay as
+# local files and are not versioned.
 
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
 BASE_DIR="/mnt/h/Il mio Drive/LAVORO_MD_NPC1L1_nov25/MD_6V3F_6V3H_500ns_sept25"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 FIT_GROUP=1    # transmembrane region, 'r_612-782_r_1092-1242' in index.ndx
 ANAL_GROUP=0   # whole protein, 'Protein' in index.ndx
@@ -33,6 +37,24 @@ traj_base() {
     esac
 }
 
+# the final_data subdirectories the two conformations and the two conditions map to
+state_of() {
+    case "$1" in
+        6v3f) echo "open" ;;
+        6v3h) echo "closed" ;;
+    esac
+}
+
+binding_of() {
+    case "$1" in
+        col)    echo "bound" ;;
+        no-col) echo "apo" ;;
+    esac
+}
+
+# Both helpers read the index file from ${NDX}, set by the loop, and work in the cwd, which the
+# loop sets to the final_data directory the projections belong to.
+
 # Build the joint PC space from the concatenated trajectory of the two systems.
 # Outputs into the cwd: eigenvec.trr  eigenval.xvg  average.pdb  covar.log
 # Usage: build_space <joint_traj> <fit_reference>
@@ -40,7 +62,7 @@ build_space() {
     echo "${FIT_GROUP} ${ANAL_GROUP}" | gmx covar \
         -f "$1" \
         -s "$2" \
-        -n index.ndx
+        -n "${NDX}"
 }
 
 # Project one system's cumulative trajectory onto the PC1-PC2 space built in the cwd.
@@ -53,7 +75,7 @@ project() {
         -eig eigenval.xvg \
         -first 1 -last 2 \
         -2d "$3" \
-        -n index.ndx
+        -n "${NDX}"
 }
 
 # =============================================================================
@@ -62,13 +84,15 @@ project() {
 for PDB in 6v3f 6v3h; do
     CONF_DIR="${BASE_DIR}/${PDB}/data"
     JOINT_DIR="${CONF_DIR}/col-and-no-col"
-    WORK_DIR="${JOINT_DIR}/${TMFIT_DIR}"
+    NDX="${JOINT_DIR}/${TMFIT_DIR}/index.ndx"
+    WORK_DIR="${REPO_DIR}/final_data/$(state_of "${PDB}")/bound-vs-apo/pca-2d-proj"
 
     echo ""
     echo "============================================================"
     echo "  joint PCA – bound vs apo, ${PDB}"
     echo "============================================================"
 
+    mkdir -p "${WORK_DIR}"
     cd "${WORK_DIR}" || { echo "ERROR: cannot enter ${WORK_DIR}"; continue; }
 
     # the joint space is fit on the bound (col) per-system average
@@ -90,7 +114,8 @@ done
 # =============================================================================
 for COND in col no-col; do
     JOINT_DIR="${BASE_DIR}/compare-6v3f-6v3h/${COND}-6v3f-6v3h"
-    WORK_DIR="${JOINT_DIR}/${TMFIT_DIR}"
+    NDX="${JOINT_DIR}/${TMFIT_DIR}/index.ndx"
+    WORK_DIR="${REPO_DIR}/final_data/comparison_open-vs-closed/$(binding_of "${COND}")/pca-2d-proj"
     TRAJ="${N_REP}t$(traj_base "${COND}").xtc"
 
     echo ""
@@ -98,6 +123,7 @@ for COND in col no-col; do
     echo "  joint PCA – open vs closed, ${COND}"
     echo "============================================================"
 
+    mkdir -p "${WORK_DIR}"
     cd "${WORK_DIR}" || { echo "ERROR: cannot enter ${WORK_DIR}"; continue; }
 
     # the joint space is fit on the open (6v3f) per-system average
