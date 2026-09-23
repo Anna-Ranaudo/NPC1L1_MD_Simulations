@@ -1,0 +1,8 @@
+RMSD (without fit) between the two average structures: 0.170 (nm)
+
+Will compare the covariance matrices using 3783 dimensions
+Trace of the two matrices: 32.6185 and 42.0798
+Square root of the traces: 5.71126 and 6.4869
+The overlap of the covariance matrices:
+  normalized:  0.367
+       shape:  0.371
