@@ -2,7 +2,9 @@
 
 Repository containing files and scripts for molecular dynamics simulations of the transmembrane protein NPC1L1.
 
-<img src="TOC_NPC1L1.png" alt="drawing" width="400"/>
+<div align="center">
+  <img src="TOC_NPC1L1.png" alt="drawing" width="400"/>
+</div>
 
 The MD simulations were run with Amber (pmemd.CUDA engine), trajectories were preprocessed with cpptraj, analyses were mainly performed with MDAnalysis, while the principal component analysis was run with GROMACS (`gmx covar` / `gmx anaeig`).
 
