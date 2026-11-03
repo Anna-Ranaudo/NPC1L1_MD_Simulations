@@ -2,6 +2,11 @@
 
 Repository containing files and scripts for molecular dynamics simulations of the transmembrane protein NPC1L1.
 
+The repository is associated to the following paper:
+
+Anna Ranaudo, Ugo Cosentino, Claudio Greco, Giorgio Moro, Sandra Citterio; The NPC1L1 Sterol Transporter: A Molecular Dynamics Study on the Influence of Cholesterol Binding on Intradomain and Interdomain Motions. _J. Phys. Chem. B_ **2026**; https://doi.org/10.1021/acs.jpcb.6c04115
+
+
 <div align="center">
   <img src="TOC_NPC1L1.png" alt="drawing" width="400"/>
 </div>
