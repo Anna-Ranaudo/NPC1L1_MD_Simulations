@@ -188,7 +188,7 @@ def calculate_salt_bridge_occupancy_parallel(topo_path, traj_files, sel_b1, sel_
         for (res1, res2), count in merged_counts.items()
     }
     
-    return occupancies:
+    return occupancies
 
 
 # --- MAIN SCRIPT ---
